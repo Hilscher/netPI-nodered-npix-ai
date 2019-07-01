@@ -1,0 +1,43 @@
+{
+  "name": "netPI-nodered-npix-ai",
+  "version": "1.0.0",
+  "description": "Node-RED node to talk to NIOT-E-NPIX-4AI16U/I modules",
+  "dependencies": {
+    "node-ads1x15": "^1.0.0",
+    "locks": "0.2.2"
+  },
+  "main": "npixai.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node-red",
+    "npix",
+    "hilscher",
+    "netpi",
+    "adc",
+    "ads1115",
+    "input",
+    "output",
+    "analog"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hilscher/netPI-nodered-npix-ai"
+  },
+  "node-red": {
+    "nodes": {
+      "npix-ai": "npixai.js"
+    }
+  },
+  "author": {
+    "name": "hilschernetpi",
+    "email": "netpi@hilscher.com",
+    "url": "https://github.com/Hilscher/netPI-nodered-npix-ai"
+  },
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": ""
+  }
+}

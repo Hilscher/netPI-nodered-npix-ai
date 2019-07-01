@@ -1,0 +1,100 @@
+<!--
+  Copyright 2013,2014 IBM Corp.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. --> 
+
+<script type="text/x-red" data-template-name="npixaiinput">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-in"><i class="fa fa-random"></i> Input</label>
+        <select id="node-input-in">
+            <option value="0" >ai in0</option>
+            <option value="1" >ai in1</option>
+            <option value="2" >ai in2</option>
+            <option value="3" >ai in3</option>
+        </select>
+    </div>
+
+   <div class="form-row">
+        <label for="node-input-module"><i class="fa fa-random"></i> Module</label>
+        <select id="node-input-module">
+            <option value="0" >4AI16U</option>
+        </select>
+    </div>
+
+   <div id="node-new-line" class="form-row hidden">
+        <label for="node-input-range"><i class="fa fa-random"></i> Range</label>
+        <select id="node-input-range"> 
+            <option value="4096">+/-32V</option>
+            <option value="2048">+/-28V</option>
+            <option value="1024">+/-14V</option>
+            <option value="512">+/-7V</option>
+            <option value="256">+/-3.5V</option>
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-calib"><i class="fa fa-tag"></i> Offset</label>
+        <input type="text" id="node-input-calib" placeholder="0.000">
+    </div>
+
+</script> 
+
+<script type="text/x-red" data-help-name="npixaiinput">
+    <p>Reads one of the four 16bit ADC analog channels of the module NIOT-E-NPIX-4AI16U.</p>
+    <p>The channel is specified in the <code>Input</code> parameter.</p>
+    <p>The value <code>Range</code> specifies the maximum amplitude input signal range to let the AD converter operate at best scale.</p>
+    <p>The value <code>Offset</code> specifies a calibration offset for the ADC value to compensate hardware fluctations.</p>
+    <p>On each inject the node generates a <code>msg.payload</code> with the measured value of the specified <code>Input</code> in unit volts.</p> </script> <script type="text/javascript">
+    RED.nodes.registerType('npixaiinput', {
+        category: 'npix',
+        defaults: {
+            name: { name: "" },
+            in: { value: "0" },
+            module: { value: "0" },
+            range: { value: "1024" },
+            calib: { value: "0.000", validate:RED.validators.number()},
+        },
+        color:"#0087C9",
+        inputs: 1,
+        outputs: 1,
+        icon: "serial.png",
+        paletteLabel: "ai in",
+        align: "left",
+        label: function () {
+           var na = "";
+           if (this.in === "0") { na = "ai in0"; }
+           if (this.in === "1") { na = "ai in1"; }
+           if (this.in === "2") { na = "ai in2"; }
+           if (this.in === "3") { na = "ai in3"; }
+           return this.name||na;
+       },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+       },
+        oneditprepare: function() {
+           var updateOptions = function() {
+               var module = $("#node-input-module option:selected").val();
+
+               if( module == "0" ) {
+                 $("#node-new-line").show();
+               } else {
+                 $("#node-new-line").hide();
+               }
+           }
+           updateOptions();
+           $("#node-input-module").change(updateOptions);
+        }
+
+    });
+</script>
