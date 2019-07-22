@@ -55,20 +55,24 @@ module.exports = function (RED) {
                // lock before the value can be read, else parallel reading would be possible
                node.mutex.lock(function () {
 
+                    var error = false;
                     adc.readADCDifferential(node.ch0, node.ch1, node.gainamplifier, node.datarate, function (err, data) {
 
-                        // unlock 
-                        node.mutex.unlock();
                         if (err) {
                             node.status({ fill: "red", shape: "dot", text: "Error" });
                             node.warn(err);
+                            error = true; // remember we had an error
                         } else {
-                            node.status({ fill: "green", shape: "dot", text: "Read" });
-                            // returned data value is by factor 100 too high
-                            // and there is a preamplifier installed prior the ADS1115 with a split ratio of 1:1.4 
-                            node.send({
-                                payload: (((data*1.4)/100)+node.calib).toFixed(3)
-                            });
+                            // unlock just in case we got a callback without error 
+                            node.mutex.unlock();
+                            if(error === false) { // just in case we had no error return valid data
+                               node.status({ fill: "green", shape: "dot", text: "Read" });
+                               // returned data value is by factor 1000 too high (mV) and needs also to be inverted
+                               // and there is a preamplifier installed prior the ADS1115 with a split ratio of 1:14
+                               node.send({
+                                   payload: (((-data*14)/1000)+node.calib).toFixed(3)
+                               });
+                            }
                         }
                     });
 
