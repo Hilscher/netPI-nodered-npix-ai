@@ -70,7 +70,7 @@ module.exports = function (RED) {
                                // returned data value is by factor 1000 too high (mV) and needs also to be inverted
                                // and there is a preamplifier installed prior the ADS1115 with a split ratio of 1:14
                                node.send({
-                                   payload: (((-data*14)/1000)+node.calib).toFixed(3)
+                                   payload: (((-data*13.65)/1000)+node.calib).toFixed(3)
                                });
                             }
                         }
