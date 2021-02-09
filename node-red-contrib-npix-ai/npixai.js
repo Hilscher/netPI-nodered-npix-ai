@@ -61,6 +61,9 @@ module.exports = function (RED) {
                         if (err) {
                             node.status({ fill: "red", shape: "dot", text: "Error" });
                             node.warn(err);
+                            if( error === true) { // an error is pending already, so unlock mutex
+                               node.mutex.unlock();     
+                            }
                             error = true; // remember we had an error
                         } else {
                             // unlock just in case we got a callback without error 
