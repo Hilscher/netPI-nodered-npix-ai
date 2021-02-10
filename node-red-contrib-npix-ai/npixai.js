@@ -55,27 +55,18 @@ module.exports = function (RED) {
                // lock before the value can be read, else parallel reading would be possible
                node.mutex.lock(function () {
 
-                    var error = false;
                     adc.readADCDifferential(node.ch0, node.ch1, node.gainamplifier, node.datarate, function (err, data) {
-
+                        node.mutex.unlock();
                         if (err) {
                             node.status({ fill: "red", shape: "dot", text: "Error" });
-                            node.warn(err);
-                            if( error === true) { // an error is pending already, so unlock mutex
-                               node.mutex.unlock();     
-                            }
-                            error = true; // remember we had an error
                         } else {
-                            // unlock just in case we got a callback without error 
-                            node.mutex.unlock();
-                            if(error === false) { // just in case we had no error return valid data
-                               node.status({ fill: "green", shape: "dot", text: "Read" });
-                               // returned data value is by factor 1000 too high (mV) and needs also to be inverted
-                               // and there is a preamplifier installed prior the ADS1115 with a split ratio of 1:14
-                               node.send({
-                                   payload: (((-data*13.65)/1000)+node.calib).toFixed(3)
-                               });
-                            }
+                           node.status({ fill: "green", shape: "dot", text: "Read" });
+                           // returned data value is by factor 1000 too high (mV) and needs also to be inverted
+                           // and there is a preamplifier installed prior the ADS1115 with a split ratio of 1:14
+                           node.send({
+                               payload: parseFloat((((-data*13.65)/1000)+node.calib).toFixed(3))
+                           });
+
                         }
                     });
 
